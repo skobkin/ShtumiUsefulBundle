@@ -26,7 +26,9 @@ class DependentFilteredSelect2Type extends AbstractType
             'empty_value'       => '',
             'entity_alias'      => null,
             'parent_field'      => null,
-            'compound'          => false
+            'compound'          => false,
+            'preferred_value'    => null,
+            'preferred_text'    => null,
         ));
     }
 
@@ -67,6 +69,8 @@ class DependentFilteredSelect2Type extends AbstractType
         $view->vars['entity_alias'] = $form->getConfig()->getAttribute('entity_alias');
         $view->vars['no_result_msg'] = $form->getConfig()->getAttribute('no_result_msg');
         $view->vars['empty_value'] = $form->getConfig()->getAttribute('empty_value');
+        $view->vars['preferred_value'] = $form->getConfig()->getOption('preferred_value');
+        $view->vars['preferred_text'] = $form->getConfig()->getOption('preferred_text');
     }
 
 }
