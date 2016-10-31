@@ -26,6 +26,7 @@ class EntityToSelect2ValueTransformer implements DataTransformerInterface
     {
 
         if (null === $entity || '' === $entity) {
+            // FIXME WTF value === 'null'
             return 'null';
         }
         if (!is_object($entity)) {

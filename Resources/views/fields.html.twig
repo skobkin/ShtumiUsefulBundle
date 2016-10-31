@@ -167,8 +167,11 @@
                 }
             });
 
-            {% if preferred_value and preferred_text %}
-            jQuery("#{{ form.vars.id }}").select2('data', {
+            {# FIXME WTF value === 'null' #}
+            {% if value and value != 'null' %}
+            $select.select2('data', {{ value|raw }});
+            {% elseif preferred_value and preferred_text %}
+            $select.select2('data', {
                 id: {{ preferred_value | json_encode | raw }},
                 text: {{ preferred_text | json_encode | raw }}
             });
