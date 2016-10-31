@@ -7,7 +7,14 @@
     "authors": [
         {
             "name": "Mikhail Shtukin",
-            "email": "shtumi@tut.by"
+            "email": "shtumi@tut.by",
+            "role": "Original bundle author"
+        },
+        {
+            "name": "Alexey Eschenko",
+            "email": "skobkin-ru@ya.ru",
+            "role": "Fork maintainer",
+            "homepage": "https://skobk.in/"
         }
     ],
     "require": {
