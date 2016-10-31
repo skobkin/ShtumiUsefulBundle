@@ -31,15 +31,17 @@ class DependentFilteredEntityController extends Controller
             }
         }
 
+        $queryRootAlias = 'e';
+
         $qb = $this->getDoctrine()
                 ->getRepository($entity_inf['class'])
-                ->createQueryBuilder('e')
-                ->where('e.' . $entity_inf['parent_property'] . ' = :parent_id')
-                ->orderBy('e.' . $entity_inf['order_property'], $entity_inf['order_direction'])
+                ->createQueryBuilder($queryRootAlias)
+                ->where($queryRootAlias.'.'.$entity_inf['parent_property'].' = :parent_id')
+                ->orderBy($queryRootAlias.'.'.$entity_inf['order_property'], $entity_inf['order_direction'])
                 ->setParameter('parent_id', $parent_id);
 
         if (null !== $entity_inf['callback']) {
-            $qb = $this->processQueryCallback($qb, $entity_inf['class'], $entity_inf['callback']);
+            $qb = $this->processQueryCallback($qb, $queryRootAlias, $entity_inf['class'], $entity_inf['callback']);
         }
 
         $results = $qb->getQuery()->getResult();
@@ -93,17 +95,19 @@ class DependentFilteredEntityController extends Controller
 
         $like = '%' . $term . '%';
 
+        $queryRootAlias = 'e';
+
         $property = $entity_inf['property'];
         if (!$entity_inf['property_complicated']) {
-            $property = 'e.' . $property;
+            $property = $queryRootAlias.'.'.$property;
         }
 
         $qb = $em->createQueryBuilder()
-            ->select('e')
-            ->from($entity_inf['class'], 'e')
-            ->where('e.' . $entity_inf['parent_property'] . ' = :parent_id')
+            ->select($queryRootAlias)
+            ->from($entity_inf['class'], $queryRootAlias)
+            ->where($queryRootAlias.'.'.$entity_inf['parent_property'].' = :parent_id')
             ->setParameter('parent_id', $parent_id)
-            ->orderBy('e.' . $entity_inf['order_property'], $entity_inf['order_direction'])
+            ->orderBy($queryRootAlias.'.'.$entity_inf['order_property'], $entity_inf['order_direction'])
             ->setParameter('like', $like )
             ->setMaxResults($maxRows)
         ;
@@ -115,7 +119,7 @@ class DependentFilteredEntityController extends Controller
         }
 
         if (null !== $entity_inf['callback']) {
-            $qb = $this->processQueryCallback($qb, $entity_inf['class'], $entity_inf['callback']);
+            $qb = $this->processQueryCallback($qb, $queryRootAlias, $entity_inf['class'], $entity_inf['callback']);
         }
 
         $results = $qb->getQuery()->getResult();
@@ -135,12 +139,13 @@ class DependentFilteredEntityController extends Controller
      * Processes the query builder through callback
      *
      * @param QueryBuilder $qb
+     * @param string $alias Root alias for entity
      * @param string $className Entity class
      * @param callable $callback
      *
      * @return QueryBuilder
      */
-    private function processQueryCallback(QueryBuilder $qb, $className, $callback)
+    private function processQueryCallback(QueryBuilder $qb, $alias, $className, $callback)
     {
         if (!is_callable($callback, true)) {
             throw new \InvalidArgumentException('$callback must be callable');
@@ -164,10 +169,11 @@ class DependentFilteredEntityController extends Controller
                 ));
             }
 
-            return $this->callCallback([$repository, $callback], [$qb]);
+            return $this->callCallback([$repository, $callback], [$qb, $alias]);
         } else {
             // Callback is static method of class
-            return $this->callCallback($callback, [$qb]);
+
+            return $this->callCallback($callback, [$qb, $alias]);
         }
     }
 
