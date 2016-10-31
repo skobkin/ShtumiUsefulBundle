@@ -67,7 +67,7 @@ twig:
             - ShtumiUsefulBundle::fields.html.twig
 ```
 
-Update your configuration in accordance with [using ShtumiUsefulBundle things](https://github.com/shtumi/ShtumiUsefulBundle/blob/master/Resources/doc/index.rst)
+Update your configuration in accordance with [using ShtumiUsefulBundle things](https://github.com/skobkin/ShtumiUsefulBundle/blob/master/Resources/doc/index.rst)
 
 ### Load jQuery to your views
 ```
