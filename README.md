@@ -27,21 +27,10 @@ You can use Ajax autocomplete form type as a filter type with [SonataAdminBundle
 
 ## Installation
 
-### Add the following lines to your  `deps` file and then run `php bin/vendors install`:
+### Use [Composer](https://getcomposer.org/):
 
 ```
-[ShtumiUsefulBundle]
-    git=https://github.com/shtumi/ShtumiUsefulBundle.git
-    target=bundles/Shtumi/UsefulBundle
-```
-
-For Symfony 2.0 please use branch 2.0 of ShtumiUsefulBundle:
-
-```
-[ShtumiUsefulBundle]
-    git=https://github.com/shtumi/ShtumiUsefulBundle.git
-    target=bundles/Shtumi/UsefulBundle
-    version=origin/2.0
+composer require skobkin/useful-bundle
 ```
 
 You also should install [SonataAdminBundle](https://github.com/sonata-project/SonataAdminBundle) and all dependencies for it.
@@ -57,14 +46,6 @@ You also should install [SonataAdminBundle](https://github.com/sonata-project/So
             // ...
         );
     }
-```
-### Register the ShtumiUsefulBundle namespace
-```
-    // app/autoload.php
-    $loader->registerNamespaces(array(
-        'Shtumi'            => __DIR__.'/../vendor/bundles',
-        // your other namespaces
-    ));
 ```
 ### Import routes
 
