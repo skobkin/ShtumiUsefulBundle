@@ -51,22 +51,24 @@ class DependentFilteredEntityController extends Controller
         }
 
         $html = '';
-        if ($empty_value !== false)
-            $html .= '<option value="">' . $translator->trans($empty_value) . '</option>';
+        if ($empty_value !== false) {
+            $html .= '<option value="">'.$translator->trans($empty_value).'</option>';
+        }
 
         $getter =  $this->getGetterName($entity_inf['property']);
 
         foreach($results as $result)
         {
-            if ($entity_inf['property'])
-                $res = $result->$getter();
-            else $res = (string)$result;
+            if ($entity_inf['property']) {
+                $text = call_user_func([$result, $getter]);
+            } else {
+                $text = (string) $result;
+            }
 
-            $html = $html . sprintf("<option value=\"%d\">%s</option>",$result->getId(), $res);
+            $html .= sprintf("<option value=\"%d\">%s</option>", $result->getId(), htmlspecialchars($text));
         }
 
         return new Response($html);
-
     }
 
 
@@ -124,11 +126,19 @@ class DependentFilteredEntityController extends Controller
 
         $results = $qb->getQuery()->getResult();
 
+        $getter =  $this->getGetterName($entity_inf['property']);
+
         $res = array();
         foreach ($results AS $r){
+            if ($entity_inf['property']) {
+                $text = call_user_func([$r, $getter]);
+            } else {
+                $text = (string) $r;
+            }
+
             $res[] = array(
                 'id' => $r->getId(),
-                'text' => (string)$r
+                'text' => $text,
             );
         }
 
