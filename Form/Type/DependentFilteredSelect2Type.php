@@ -5,10 +5,11 @@ namespace Shtumi\UsefulBundle\Form\Type;
 use Shtumi\UsefulBundle\Form\DataTransformer\EntityToIdTransformer;
 use Shtumi\UsefulBundle\Form\DataTransformer\EntityToSelect2ValueTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DependentFilteredSelect2Type extends AbstractType
 {
@@ -20,7 +21,10 @@ class DependentFilteredSelect2Type extends AbstractType
         $this->container = $container;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'empty_value'       => '',
@@ -34,12 +38,17 @@ class DependentFilteredSelect2Type extends AbstractType
 
     public function getParent()
     {
-        return 'form';
+        return FormType::class;
+    }
+
+    public function getBlockPrefix()
+    {
+        return 'shtumi_dependent_filtered_select2';
     }
 
     public function getName()
     {
-        return 'shtumi_dependent_filtered_select2';
+        return $this->getBlockPrefix();
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

@@ -9,9 +9,11 @@
 namespace Shtumi\UsefulBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\DataTransformer\ValueToStringTransformer;
 use Shtumi\UsefulBundle\Form\DataTransformer\DateRangeToValueTransformer;
@@ -31,7 +33,7 @@ class DateRangeType extends AbstractType
         $this->container        = $container;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'default' => null,
@@ -41,12 +43,17 @@ class DateRangeType extends AbstractType
 
     public function getParent()
     {
-        return 'text';
+        return TextType::class;
+    }
+
+    public function getBlockPrefix()
+    {
+        return 'shtumi_daterange';
     }
 
     public function getName()
     {
-        return 'shtumi_daterange';
+        return $this->getBlockPrefix();
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

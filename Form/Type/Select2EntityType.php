@@ -3,11 +3,13 @@
 namespace Shtumi\UsefulBundle\Form\Type;
 
 use Shtumi\UsefulBundle\Form\DataTransformer\EntityToSelect2ValueTransformer;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Exception\FormException;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class Select2EntityType extends AbstractType
@@ -19,7 +21,7 @@ class Select2EntityType extends AbstractType
         $this->container = $container;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'entity_alias'      => null,
@@ -29,14 +31,19 @@ class Select2EntityType extends AbstractType
         ));
     }
 
-    public function getName()
+    public function getBlockPrefix()
     {
         return 'shtumi_select2_entity';
     }
 
+    public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
     public function getParent()
     {
-        return 'text';
+        return TextType::class;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
