@@ -95,8 +95,6 @@ class DependentFilteredEntityController extends Controller
         $term = $request->get('term');
         $maxRows = $request->get('maxRows', 20);
 
-        $like = '%' . $term . '%';
-
         $queryRootAlias = 'e';
 
         $property = $entity_inf['property'];
@@ -109,16 +107,33 @@ class DependentFilteredEntityController extends Controller
             ->from($entity_inf['class'], $queryRootAlias)
             ->where($queryRootAlias.'.'.$entity_inf['parent_property'].' = :parent_id')
             ->setParameter('parent_id', $parent_id)
-            ->orderBy($queryRootAlias.'.'.$entity_inf['order_property'], $entity_inf['order_direction'])
-            ->setParameter('like', $like )
             ->setMaxResults($maxRows)
         ;
 
-        if ($entity_inf['case_insensitive']) {
-            $qb->andWhere('LOWER(' . $property . ') LIKE LOWER(:like)');
-        } else {
-            $qb->andWhere($property . ' LIKE :like');
+        if (!empty($term)) {
+            if ($entity_inf['case_insensitive']) {
+                $qb->andWhere('LOWER('.$property.') LIKE LOWER(:like)');
+            } else {
+                $qb->andWhere($property.' LIKE :like');
+            }
+
+            $qb->setParameter('like', '%'.$term.'%' );
+
+            if ($entity_inf['full_match_first']) {
+                if ($entity_inf['case_insensitive']) {
+                    $qb->addSelect('CASE WHEN LOWER('.$property.') = LOWER(:term) THEN 1 ELSE 0 END AS HIDDEN sortCondition');
+                } else {
+                    $qb->addSelect('CASE WHEN '.$property.' = :term THEN 1 ELSE 0 END AS HIDDEN sortCondition');
+                }
+
+                $qb
+                    ->setParameter('term', $term)
+                    ->orderBy('sortCondition', 'DESC')
+                ;
+            }
         }
+
+        $qb->addOrderBy($queryRootAlias.'.'.$entity_inf['order_property'], $entity_inf['order_direction']);
 
         if (null !== $entity_inf['callback']) {
             $qb = $this->processQueryCallback($qb, $queryRootAlias, $entity_inf['class'], $entity_inf['callback']);
